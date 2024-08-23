@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DataBase;
@@ -201,19 +202,32 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
                             consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "%'";
                             break;
 
-                        case "Menor a":
+                        case "Menor a":                           
                             consulta += "< " + filtro;
                             break;
 
                         case "Mayor a":
-                            consulta += "> " +  filtro;
+                                consulta += "> " +  filtro;      
                             break;
                         
-                        default: 
-                            consulta += "= " + filtro;
+                        default:
+                                consulta += "= " + filtro;               
                             break;
                     }
-                    dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                    if (campo == "Precio")
+                    {
+                        if (ValidarSoloNumeros(filtro))
+                        {
+                            dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Solo ingrese numeros");
+                        }
+                    }else
+                    {
+                        dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                    }
                 }else
                 {
                     if (campo == "Categoria")
@@ -240,6 +254,12 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
         {
             tbFiltro.Text = "";
             Cargar();
+        }
+
+        private bool ValidarSoloNumeros(string filtro)
+        {
+            bool isValid = Regex.IsMatch(filtro, @"^[\d\p{P}]+$");
+            return isValid;
         }
     }
 }
