@@ -57,7 +57,7 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
             {
                 pb.Load(imagen);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 pb.Load("https://tresubresdobles.com/wp-content/uploads/2019/07/skft-5ed6f087f52ef79a86da813cca5d3f00.jpg");
@@ -186,47 +186,53 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
                 if (tbFiltro.Enabled == true)
                 {
                     consulta += campo;
-                    string criterio = cbCriterio.SelectedItem.ToString();
                     string filtro = tbFiltro.Text;
-                    switch (criterio)
+                    if (cbCriterio.SelectedIndex == -1)
                     {
-                        case "Inicia con":
-                            consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '" + filtro + "%'";
-                            break;
+                        MessageBox.Show("Seleccione un criterio y vuelva a intentar");
+                    }else
+                    {
+                        string criterio = cbCriterio.SelectedItem.ToString();
+                        switch (criterio)
+                        {
+                            case "Inicia con":
+                                consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '" + filtro + "%'";
+                                break;
 
-                        case "Termina con":
-                            consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "'";
-                            break;
+                            case "Termina con":
+                                consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "'";
+                                break;
 
-                        case "Contiene":
-                            consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "%'";
-                            break;
+                            case "Contiene":
+                                consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "%'";
+                                break;
 
-                        case "Menor a":                           
-                            consulta += "< " + filtro;
-                            break;
+                            case "Menor a":                           
+                                consulta += "< " + filtro;
+                                break;
 
-                        case "Mayor a":
+                            case "Mayor a":
                                 consulta += "> " +  filtro;      
                             break;
                         
-                        default:
+                            default:
                                 consulta += "= " + filtro;               
                             break;
-                    }
-                    if (campo == "Precio")
-                    {
-                        if (ValidarSoloNumeros(filtro))
-                        {
-                            dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
                         }
-                        else
+                        if (campo == "Precio")
+                        {
+                            if (ValidarSoloNumeros(filtro))
+                            {
+                                dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                            }
+                            else
                         {
                             MessageBox.Show("Solo ingrese numeros");
                         }
-                    }else
-                    {
-                        dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                        }else
+                        {
+                            dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                        }
                     }
                 }else
                 {
