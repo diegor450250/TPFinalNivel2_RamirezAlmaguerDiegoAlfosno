@@ -179,11 +179,14 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
         private void btnFiltro_Click(object sender, EventArgs e)
         {
             ArticuloDB articuloDB = new ArticuloDB();
-            string consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A.";
-            string campo = cbCampo.SelectedItem.ToString();
             try
             {
-                if (tbFiltro.Enabled == true)
+                string consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A.";
+                if (cbCampo.SelectedIndex >= 0)
+                {
+
+                    string campo = cbCampo.SelectedItem.ToString();
+                    if (tbFiltro.Enabled == true)
                 {
                     consulta += campo;
                     string filtro = tbFiltro.Text;
@@ -196,15 +199,15 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
                         switch (criterio)
                         {
                             case "Inicia con":
-                                consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '" + filtro + "%'";
+                                consulta += " like '" + filtro + "%'";
                                 break;
 
                             case "Termina con":
-                                consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "'";
+                                consulta += " like '%" + filtro + "'";
                                 break;
 
                             case "Contiene":
-                                consulta = "Select A.Id, A.Codigo, A.Nombre, A.Descripcion, A.ImagenUrl, A.Precio, A.IdCategoria, C.Descripcion Categoria, A.IdMarca, M.Descripcion Marca From ARTICULOS A, CATEGORIAS C, MARCAS M WHERE A.IdCategoria = C.Id and A.IdMarca = M.Id and A." + campo + " like '%" + filtro + "%'";
+                                consulta += " like '%" + filtro + "%'";
                                 break;
 
                             case "Menor a":                           
@@ -235,18 +238,22 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
                         }
                     }
                 }else
-                {
-                    if (campo == "Categoria")
+                    {
+                        if (campo == "Categoria")
                     {
                         Categoria aux = (Categoria)cbCriterio.SelectedItem;
                         consulta += "IdCategoria = " + aux.Id;
                     }
-                    else
+                        else
                     {
                         Marca aux = (Marca)cbCriterio.SelectedItem;
                         consulta += "IdMarca = " + aux.Id;
                     }
-                    dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                        dgw.DataSource = articuloDB.BusquedaFiltro(consulta);
+                    }
+                }else
+                {
+                    MessageBox.Show("Seleccione un campo");
                 }
             }
             catch (Exception ex) 
@@ -264,7 +271,7 @@ namespace TPFinalNivel2_RamirezAlmaguerDiegoAlfosno
 
         private bool ValidarSoloNumeros(string filtro)
         {
-            bool isValid = Regex.IsMatch(filtro, @"^[\d\p{P}]+$");
+            bool isValid = Regex.IsMatch(filtro, @"^[\d.]+$");
             return isValid;
         }
     }
